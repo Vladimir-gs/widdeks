@@ -47,7 +47,7 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "autostart"; Description: "Iniciar Widdeks automáticamente al iniciar sesión"; GroupDescription: "Opciones adicionales:"
+Name: "autostart"; Description: "Iniciar Widdeks automáticamente al iniciar sesión"; GroupDescription: "Opciones adicionales:"; Flags: checkedonce
 Name: "desktopicon"; Description: "Crear un acceso directo en el Escritorio"; GroupDescription: "Opciones adicionales:"
 
 [Files]

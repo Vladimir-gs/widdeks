@@ -6,37 +6,42 @@ Widdeks es una aplicación de escritorio para Windows que muestra un reloj perso
 
 ## Instalación
 
-### Requisitos previos
-- Windows 10/11
-- Python 3.x instalado
-- `pythonw.exe` debe estar disponible en tu PATH
+### Opción recomendada: instalador
 
-### Pasos de instalación
+1. Descarga `Widdeks-Setup-X.Y.Z.exe` desde la sección [Releases](https://github.com/Vladimir-gs/widdeks/releases).
+2. Ejecútalo y sigue el asistente. **No requiere permisos de administrador.**
+3. Elige si quieres auto-inicio y acceso directo en el Escritorio.
+4. Al finalizar, Widdeks se abre automáticamente.
 
-1. **Ejecutar el instalador PowerShell**
-   Abre PowerShell como administrador y ejecuta:
+> El instalador incluye todo lo necesario (Python y dependencias). No hace falta instalar nada más.
 
-   ```powershell
-   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-   .\clock-widget\install.ps1
-   ```
+Qué hace el instalador:
 
-   *Alternativamente, desde la carpeta clock-widget:*
+- Instala en `%LOCALAPPDATA%\Programs\Widdeks`.
+- Configura el auto-inicio (opcional) y el acceso directo del menú Inicio.
+- Detecta y cierra versiones anteriores antes de actualizar.
+- Migra automáticamente tu configuración existente.
+- Registra "Widdeks" en **Aplicaciones instaladas**, con desinstalador propio.
 
-   ```powershell
-   cd clock-widget
-   .\install.ps1
-   ```
+### Opción para desarrollo: script PowerShell
 
-2. **Qué hace el instalador**
-   - Copia `widdeks.py` y las fuentes a `%LOCALAPPDATA%\Programs\Widdeks`
-   - Configura el inicio automático en el registro de Windows bajo "Widdeks"
-   - Crea un acceso directo en el menú Inicio con el nombre "Widdeks"
-   - Elimina la instalación anterior "Reloj Widget" si existe
-   - Inicia la aplicación automáticamente
+Requisitos: Windows 10/11 y Python 3.x con `pythonw.exe` disponible en el `PATH`.
 
-3. **Primer lanzamiento**
-   Al terminar, verás un reloj digital y un panel en tu escritorio. La aplicación debería abrirse automáticamente.
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\clock-widget\install.ps1
+```
+
+*Alternativamente, desde la carpeta `clock-widget`:*
+
+```powershell
+cd clock-widget
+.\install.ps1
+```
+
+El script copia la aplicación a `%LOCALAPPDATA%\Programs\Widdeks`, configura el auto-inicio, crea el acceso directo del menú Inicio y la inicia.
+
+**Primer lanzamiento:** verás un reloj digital y un panel en tu escritorio.
 
 ## Uso básico
 
@@ -116,11 +121,19 @@ Los archivos de configuración se guardan en formato JSON y se pueden editar dir
   - `x`, `y`: Posición
   - `shortcuts`: Array de accesos directos a aplicaciones
 
-Estos archivos están en `%LOCALAPPDATA%\Programs\Widdeks\` o en la carpeta de instalación.
+Estos archivos están en `%LOCALAPPDATA%\Widdeks\`.
 
 ## Desinstalación
 
-Para desinstalar widdeks completamente:
+### Si instalaste con el instalador
+
+Ve a **Configuración** > **Aplicaciones** > **Aplicaciones instaladas**, busca **Widdeks** y pulsa **Desinstalar**.
+
+El desinstalador elimina la aplicación, el auto-inicio, los accesos directos y los datos de usuario (`%LOCALAPPDATA%\Widdeks`).
+
+### Si instalaste con el script
+
+Ejecuta:
 
 ```powershell
 .\clock-widget\desinstalar.bat
@@ -131,13 +144,41 @@ Esto hará lo siguiente:
 - Eliminará la entrada del registro de inicio automático ("Widdeks")
 - Removerá el acceso directo del menú Inicio
 - Borrará los archivos de `%LOCALAPPDATA%\Programs\Widdeks\`
+- Borrará los datos de usuario (`%LOCALAPPDATA%\Widdeks`)
 - También removerá la carpeta anterior `RelojWidget` si existe
+
+## Desarrollo
+
+Compilar el ejecutable y el instalador:
+
+```powershell
+winget install JRSoftware.InnoSetup   # solo la primera vez
+.\tools\build.ps1
+```
+
+Resultados:
+
+- `dist\Widdeks\Widdeks.exe` (versión portable onedir)
+- `dist\installer\Widdeks-Setup-1.0.0.exe`
+
+Autodiagnóstico del binario empaquetado:
+
+```powershell
+Start-Process .\dist\Widdeks\Widdeks.exe -ArgumentList "--selftest" -Wait
+Get-Content "$env:LOCALAPPDATA\Widdeks\selftest.json"
+```
+
+El workflow de GitHub Actions (`.github/workflows/build.yml`) compila ambos en cada push y publica el instalador al crear un tag `v*`.
+
+## Licencia
+
+Este proyecto se distribuye bajo la licencia **MIT**. Consulta [LICENSE](LICENSE).
 
 ## Notas importantes
 
-- **Primera ejecución**: Windows puede mostrar un aviso sobre scripts de PowerShell. Selecciona "More info" y luego "Run anyway" para permitir la ejecución.
+- **Método con script**: Windows puede mostrar un aviso sobre scripts de PowerShell. Selecciona "Más información" y luego "Ejecutar de todas formas". Con el instalador este aviso no aparece.
 - **Auto-start**: Si deseas desactivar el inicio automático, ve a **Administrador de tareas** > **Más detalles** > pestaña **Inicio** y desactiva la entrada "Widdeks".
-- **Compatibilidad**: La aplicación está diseñada para Windows y usa bibliotecas nativas (pycaw para audio, winrt para controles de medios).
+- **Compatibilidad**: La aplicación está diseñada para Windows 10/11 y usa bibliotecas nativas (pycaw para audio, winrt para controles de medios).
 - **Solución de problemas**: Si el brillo o volumen no responden, verifica que tengas instalados los controladores adecuados de tu fabricante de laptop/desktop.
 - **Personalización avanzada**: Edita directamente los archivos JSON si quieres configuraciones que no están disponibles en el menú clic-derecho.
 
