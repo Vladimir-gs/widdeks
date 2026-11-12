@@ -4,6 +4,7 @@ import glob
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -27,10 +28,55 @@ try:
 except Exception:
     pass
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-CLOCK_CFG = os.path.join(BASE, "clock_config.json")
-PANEL_CFG = os.path.join(BASE, "panel_config.json")
+APP_NAME = "Widdeks"
+
+
+def resource_dir():
+    """Carpeta de recursos de solo lectura (fuentes, iconos)."""
+    if getattr(sys, "frozen", False):
+        return getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(sys.executable)))
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def data_dir():
+    """Carpeta escribible de configuración y logs del usuario."""
+    base = os.environ.get("LOCALAPPDATA") or os.path.join(
+        os.path.expanduser("~"), "AppData", "Local"
+    )
+    path = os.path.join(base, APP_NAME)
+    try:
+        os.makedirs(path, exist_ok=True)
+    except Exception:
+        return resource_dir()
+    return path
+
+
+BASE = resource_dir()
+DATA = data_dir()
+CLOCK_CFG = os.path.join(DATA, "clock_config.json")
+PANEL_CFG = os.path.join(DATA, "panel_config.json")
 FONT_DIR = os.path.join(BASE, "fonts")
+LOG_PATH = os.path.join(DATA, "widget_error.log")
+
+
+def migrate_config(name):
+    """Copia configuraciones de instalaciones anteriores si aún no existen."""
+    dest = os.path.join(DATA, name)
+    if os.path.exists(dest):
+        return
+    local = os.environ.get("LOCALAPPDATA", "")
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), name),
+        os.path.join(local, "Programs", "Widdeks", name),
+        os.path.join(local, "Programs", "RelojWidget", name),
+    ]
+    for src in candidates:
+        try:
+            if os.path.isfile(src) and os.path.abspath(src) != os.path.abspath(dest):
+                shutil.copyfile(src, dest)
+                return
+        except Exception:
+            pass
 
 ULW_ALPHA = 0x2
 BI_RGB = 0
@@ -71,10 +117,11 @@ _MUTEX = None
 
 def acquire_single_instance():
     global _MUTEX
+    name = os.environ.get("WIDDEKS_MUTEX", "Local\\WiddeksApp")
     kernel32 = ctypes.windll.kernel32
     kernel32.CreateMutexW.restype = ctypes.c_void_p
     kernel32.CreateMutexW.argtypes = [ctypes.c_void_p, wintypes.BOOL, wintypes.LPCWSTR]
-    _MUTEX = kernel32.CreateMutexW(None, False, "Local\\WiddeksApp")
+    _MUTEX = kernel32.CreateMutexW(None, False, name)
     return kernel32.GetLastError() != 183
 
 
@@ -134,7 +181,7 @@ class SHFILEINFOW(ctypes.Structure):
 
 def log_error():
     try:
-        with open(os.path.join(BASE, "widget_error.log"), "a", encoding="utf-8") as fh:
+        with open(LOG_PATH, "a", encoding="utf-8") as fh:
             fh.write(traceback.format_exc() + "\n")
     except Exception:
         pass
@@ -1449,7 +1496,70 @@ class WiddeksApp:
         self.root.mainloop()
 
 
+def selftest():
+    """Diagnóstico del build empaquetado. No abre la interfaz."""
+    import platform
+
+    results = {
+        "frozen": bool(getattr(sys, "frozen", False)),
+        "python": platform.python_version(),
+        "base": BASE,
+        "data": DATA,
+        "executable": sys.executable,
+        "fonts": sorted(
+            os.path.basename(p) for p in glob.glob(os.path.join(FONT_DIR, "Poppins-*.ttf"))
+        ),
+    }
+    errors = []
+
+    def check(name, fn):
+        try:
+            results[name] = bool(fn())
+            if not results[name]:
+                errors.append(name)
+        except Exception as exc:
+            results[name] = f"{type(exc).__name__}: {exc}"
+            errors.append(name)
+
+    check("tkinter", lambda: __import__("tkinter"))
+    check("pillow", lambda: __import__("PIL.Image", fromlist=["Image"]))
+    check("pystray", lambda: __import__("pystray"))
+    check("pycaw", lambda: __import__("pycaw.pycaw", fromlist=["AudioUtilities"]).AudioUtilities)
+    check(
+        "winrt",
+        lambda: __import__(
+            "winrt.windows.media.control",
+            fromlist=["GlobalSystemMediaTransportControlsSessionManager"],
+        ).GlobalSystemMediaTransportControlsSessionManager,
+    )
+
+    try:
+        probe = os.path.join(DATA, ".write_test")
+        with open(probe, "w", encoding="utf-8") as fh:
+            fh.write("ok")
+        os.remove(probe)
+        results["data_writable"] = True
+    except Exception as exc:
+        results["data_writable"] = f"{type(exc).__name__}: {exc}"
+        errors.append("data_writable")
+
+    if not results["fonts"]:
+        errors.append("fonts")
+
+    report = {"ok": not errors, "errors": errors, "results": results}
+    try:
+        with open(os.path.join(DATA, "selftest.json"), "w", encoding="utf-8") as fh:
+            json.dump(report, fh, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+    return 0 if not errors else 1
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        sys.exit(selftest())
     if not acquire_single_instance():
         sys.exit(0)
+    migrate_config("clock_config.json")
+    migrate_config("panel_config.json")
     WiddeksApp().run()

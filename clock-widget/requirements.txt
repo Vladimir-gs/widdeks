@@ -1,0 +1,12 @@
+# Dependencias de ejecución de Widdeks (Windows)
+pystray==0.19.5
+pillow==12.3.0
+pycaw==20260927
+comtypes==1.4.17
+
+# Windows Runtime (controles multimedia)
+winrt-runtime==3.2.1
+winrt-Windows.Foundation==3.2.1
+winrt-Windows.Media==3.2.1
+winrt-Windows.Media.Control==3.2.1
+winrt-Windows.Storage.Streams==3.2.1

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+*.manifest
+
+# Logs y datos locales
+*.log
+clock-widget/widget_error.log
+
+# Accesos directos locales (contienen rutas absolutas)
+*.lnk

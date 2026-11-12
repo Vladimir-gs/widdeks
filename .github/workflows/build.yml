@@ -1,0 +1,75 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements-build.txt
+            clock-widget/requirements.txt
+
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements-build.txt
+
+      - name: Compilar Widdeks.exe
+        run: python -m PyInstaller widdeks.spec --noconfirm --clean
+
+      - name: Autodiagnostico del ejecutable
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\Widdeks\Widdeks.exe" -ArgumentList "--selftest" -PassThru -Wait
+          if ($p.ExitCode -ne 0) {
+            Get-Content "$env:LOCALAPPDATA\Widdeks\selftest.json"
+            exit 1
+          }
+
+      - name: Instalar Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Compilar instalador
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          & $iscc "installer\widdeks.iss"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Generar checksums
+        shell: pwsh
+        run: |
+          Get-FileHash dist\installer\*.exe -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash)  $(Split-Path $_.Path -Leaf)" } |
+            Set-Content dist\installer\SHA256.txt
+          Get-Content dist\installer\SHA256.txt
+
+      - name: Subir artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: Widdeks-installer
+          path: |
+            dist/installer/*.exe
+            dist/installer/SHA256.txt
+
+      - name: Publicar release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/installer/*.exe
+            dist/installer/SHA256.txt
