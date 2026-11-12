@@ -1,10 +1,10 @@
 # Widdeks - Reloj y Panel de Escritorio
 
-![Widdeks interfaz](screenshots/widdeks-screenshot.png =300x)
+![Widdeks reloj](clock-widget/screenshots/click-hora.png =300x)
 
 Widdeks es una aplicación de escritorio para Windows que muestra un reloj personalizable y un panel con acceso rápido a aplicaciones, controles de medios, volumen, brillo y estado de batería. La aplicación se ejecuta en la pantalla y se puede arrastrar y redimensionar según tus preferencias.
 
-> **Consejo:** Si tienes capturas de pantalla de la aplicación en funcionamiento, guárdalas en la carpeta `screenshots/` y referencia la imagen con la sintaxis Markdown de arriba.
+> **Consejo:** Las capturas de pantalla se encuentran en la carpeta `clock-widget/screenshots/`. Puedes agregar más imágenes allí y referenciarlas con la sintaxis Markdown estándar.
 
 ## Instalación
 
