@@ -71,6 +71,7 @@ Filename: "{app}\{#AppExe}"; Description: "Iniciar Widdeks"; Flags: nowait posti
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}\Widdeks"
+Type: filesandordirs; Name: "{app}"
 
 [Code]
 procedure CurStepChanged(CurStep: TSetupStep);
