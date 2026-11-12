@@ -18,5 +18,8 @@ Start-Sleep -Milliseconds 400
 Remove-Item $dst -Recurse -Force
 Remove-Item $oldDst -Recurse -Force
 
+# Datos de usuario (configuracion, logs)
+Remove-Item (Join-Path $env:LOCALAPPDATA "Widdeks") -Recurse -Force
+
 Write-Host ""
 Write-Host "Widdeks desinstalado." -ForegroundColor Green

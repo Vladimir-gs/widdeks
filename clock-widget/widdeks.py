@@ -4,6 +4,7 @@ import glob
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -27,10 +28,55 @@ try:
 except Exception:
     pass
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-CLOCK_CFG = os.path.join(BASE, "clock_config.json")
-PANEL_CFG = os.path.join(BASE, "panel_config.json")
+APP_NAME = "Widdeks"
+
+
+def resource_dir():
+    """Carpeta de recursos de solo lectura (fuentes, iconos)."""
+    if getattr(sys, "frozen", False):
+        return getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(sys.executable)))
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def data_dir():
+    """Carpeta escribible de configuración y logs del usuario."""
+    base = os.environ.get("LOCALAPPDATA") or os.path.join(
+        os.path.expanduser("~"), "AppData", "Local"
+    )
+    path = os.path.join(base, APP_NAME)
+    try:
+        os.makedirs(path, exist_ok=True)
+    except Exception:
+        return resource_dir()
+    return path
+
+
+BASE = resource_dir()
+DATA = data_dir()
+CLOCK_CFG = os.path.join(DATA, "clock_config.json")
+PANEL_CFG = os.path.join(DATA, "panel_config.json")
 FONT_DIR = os.path.join(BASE, "fonts")
+LOG_PATH = os.path.join(DATA, "widget_error.log")
+
+
+def migrate_config(name):
+    """Copia configuraciones de instalaciones anteriores si aún no existen."""
+    dest = os.path.join(DATA, name)
+    if os.path.exists(dest):
+        return
+    local = os.environ.get("LOCALAPPDATA", "")
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), name),
+        os.path.join(local, "Programs", "Widdeks", name),
+        os.path.join(local, "Programs", "RelojWidget", name),
+    ]
+    for src in candidates:
+        try:
+            if os.path.isfile(src) and os.path.abspath(src) != os.path.abspath(dest):
+                shutil.copyfile(src, dest)
+                return
+        except Exception:
+            pass
 
 ULW_ALPHA = 0x2
 BI_RGB = 0
@@ -134,7 +180,7 @@ class SHFILEINFOW(ctypes.Structure):
 
 def log_error():
     try:
-        with open(os.path.join(BASE, "widget_error.log"), "a", encoding="utf-8") as fh:
+        with open(LOG_PATH, "a", encoding="utf-8") as fh:
             fh.write(traceback.format_exc() + "\n")
     except Exception:
         pass
@@ -1452,4 +1498,6 @@ class WiddeksApp:
 if __name__ == "__main__":
     if not acquire_single_instance():
         sys.exit(0)
+    migrate_config("clock_config.json")
+    migrate_config("panel_config.json")
     WiddeksApp().run()

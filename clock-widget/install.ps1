@@ -29,11 +29,11 @@ $fontsDst = Join-Path $dst "fonts"
 if (Test-Path $fontsDst) { Remove-Item $fontsDst -Recurse -Force }
 Copy-Item (Join-Path $src "fonts") $fontsDst -Recurse -Force
 
-$clockSources = @((Join-Path $oldDst "clock_config.json"), (Join-Path $src "clock_config.json"))
+$clockSources = @((Join-Path $oldDst "clock_config.json"))
 $clockCfg = $clockSources | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($clockCfg) { Copy-Item $clockCfg (Join-Path $dst "clock_config.json") -Force }
 
-$panelSources = @((Join-Path $src "panel_config.json"), (Join-Path $oldDst "panel_config.json"))
+$panelSources = @((Join-Path $oldDst "panel_config.json"))
 $panelCfg = $panelSources | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($panelCfg) { Copy-Item $panelCfg (Join-Path $dst "panel_config.json") -Force }
 
