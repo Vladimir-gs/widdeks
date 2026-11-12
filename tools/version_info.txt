@@ -1,0 +1,27 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable('0C0A04B0', [
+        StringStruct('CompanyName', 'Vladimir GS'),
+        StringStruct('FileDescription', 'Widdeks - Reloj y panel de escritorio'),
+        StringStruct('FileVersion', '1.0.0'),
+        StringStruct('InternalName', 'Widdeks'),
+        StringStruct('LegalCopyright', 'Copyright (c) 2026 Vladimir GS. Licencia MIT.'),
+        StringStruct('OriginalFilename', 'Widdeks.exe'),
+        StringStruct('ProductName', 'Widdeks'),
+        StringStruct('ProductVersion', '1.0.0')
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [3082, 1200])])
+  ]
+)

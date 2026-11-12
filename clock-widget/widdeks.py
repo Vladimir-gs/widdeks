@@ -117,10 +117,11 @@ _MUTEX = None
 
 def acquire_single_instance():
     global _MUTEX
+    name = os.environ.get("WIDDEKS_MUTEX", "Local\\WiddeksApp")
     kernel32 = ctypes.windll.kernel32
     kernel32.CreateMutexW.restype = ctypes.c_void_p
     kernel32.CreateMutexW.argtypes = [ctypes.c_void_p, wintypes.BOOL, wintypes.LPCWSTR]
-    _MUTEX = kernel32.CreateMutexW(None, False, "Local\\WiddeksApp")
+    _MUTEX = kernel32.CreateMutexW(None, False, name)
     return kernel32.GetLastError() != 183
 
 
@@ -1495,7 +1496,68 @@ class WiddeksApp:
         self.root.mainloop()
 
 
+def selftest():
+    """Diagnóstico del build empaquetado. No abre la interfaz."""
+    import platform
+
+    results = {
+        "frozen": bool(getattr(sys, "frozen", False)),
+        "python": platform.python_version(),
+        "base": BASE,
+        "data": DATA,
+        "executable": sys.executable,
+        "fonts": sorted(
+            os.path.basename(p) for p in glob.glob(os.path.join(FONT_DIR, "Poppins-*.ttf"))
+        ),
+    }
+    errors = []
+
+    def check(name, fn):
+        try:
+            results[name] = bool(fn())
+            if not results[name]:
+                errors.append(name)
+        except Exception as exc:
+            results[name] = f"{type(exc).__name__}: {exc}"
+            errors.append(name)
+
+    check("tkinter", lambda: __import__("tkinter"))
+    check("pillow", lambda: __import__("PIL.Image", fromlist=["Image"]))
+    check("pystray", lambda: __import__("pystray"))
+    check("pycaw", lambda: __import__("pycaw.pycaw", fromlist=["AudioUtilities"]).AudioUtilities)
+    check(
+        "winrt",
+        lambda: __import__(
+            "winrt.windows.media.control",
+            fromlist=["GlobalSystemMediaTransportControlsSessionManager"],
+        ).GlobalSystemMediaTransportControlsSessionManager,
+    )
+
+    try:
+        probe = os.path.join(DATA, ".write_test")
+        with open(probe, "w", encoding="utf-8") as fh:
+            fh.write("ok")
+        os.remove(probe)
+        results["data_writable"] = True
+    except Exception as exc:
+        results["data_writable"] = f"{type(exc).__name__}: {exc}"
+        errors.append("data_writable")
+
+    if not results["fonts"]:
+        errors.append("fonts")
+
+    report = {"ok": not errors, "errors": errors, "results": results}
+    try:
+        with open(os.path.join(DATA, "selftest.json"), "w", encoding="utf-8") as fh:
+            json.dump(report, fh, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+    return 0 if not errors else 1
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        sys.exit(selftest())
     if not acquire_single_instance():
         sys.exit(0)
     migrate_config("clock_config.json")
