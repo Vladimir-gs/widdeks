@@ -13,3 +13,6 @@ dist/
 # Logs y datos locales
 *.log
 clock-widget/widget_error.log
+
+# Accesos directos locales (contienen rutas absolutas)
+*.lnk

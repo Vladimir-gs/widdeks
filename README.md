@@ -6,40 +6,23 @@ Widdeks es una aplicación de escritorio para Windows que muestra un reloj perso
 
 ## Instalación
 
-### Opción recomendada: instalador
+[![Descargar para Windows](https://img.shields.io/badge/Descargar%20para%20Windows-Widdeks-2ea44f?logo=windows)](https://github.com/Vladimir-gs/widdeks/releases/latest)
 
-1. Descarga `Widdeks-Setup-X.Y.Z.exe` desde la sección [Releases](https://github.com/Vladimir-gs/widdeks/releases).
-2. Ejecútalo y sigue el asistente. **No requiere permisos de administrador.**
-3. Elige si quieres auto-inicio y acceso directo en el Escritorio.
-4. Al finalizar, Widdeks se abre automáticamente.
+1. Descarga **`Widdeks-Setup-X.Y.Z.exe`** desde [Releases](https://github.com/Vladimir-gs/widdeks/releases/latest).
+2. Haz **doble clic** en el archivo.
+3. Pulsa **Siguiente** hasta terminar.
 
-> El instalador incluye todo lo necesario (Python y dependencias). No hace falta instalar nada más.
+Eso es todo. **No necesitas instalar Python ni nada más**, y **no se piden permisos de administrador**.
 
-Qué hace el instalador:
+> Al finalizar, Widdeks se abre automáticamente y queda disponible en el menú Inicio.
 
-- Instala en `%LOCALAPPDATA%\Programs\Widdeks`.
-- Configura el auto-inicio (opcional) y el acceso directo del menú Inicio.
-- Detecta y cierra versiones anteriores antes de actualizar.
-- Migra automáticamente tu configuración existente.
-- Registra "Widdeks" en **Aplicaciones instaladas**, con desinstalador propio.
+El instalador se encarga de:
 
-### Opción para desarrollo: script PowerShell
-
-Requisitos: Windows 10/11 y Python 3.x con `pythonw.exe` disponible en el `PATH`.
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\clock-widget\install.ps1
-```
-
-*Alternativamente, desde la carpeta `clock-widget`:*
-
-```powershell
-cd clock-widget
-.\install.ps1
-```
-
-El script copia la aplicación a `%LOCALAPPDATA%\Programs\Widdeks`, configura el auto-inicio, crea el acceso directo del menú Inicio y la inicia.
+- Copiar la aplicación a `%LOCALAPPDATA%\Programs\Widdeks`.
+- Configurar el auto-inicio (puedes desmarcarlo en el asistente).
+- Crear el acceso directo del menú Inicio.
+- Migrar tu configuración si tenías una versión anterior.
+- Añadir **Widdeks** a *Aplicaciones instaladas*, con su desinstalador.
 
 **Primer lanzamiento:** verás un reloj digital y un panel en tu escritorio.
 
@@ -149,7 +132,16 @@ Esto hará lo siguiente:
 
 ## Desarrollo
 
-Compilar el ejecutable y el instalador:
+### Ejecutar desde el código (sin compilar)
+
+Requiere Windows 10/11 y Python 3.x con `pythonw.exe` en el `PATH`:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\clock-widget\install.ps1
+```
+
+### Compilar el ejecutable y el instalador
 
 ```powershell
 winget install JRSoftware.InnoSetup   # solo la primera vez
@@ -176,7 +168,8 @@ Este proyecto se distribuye bajo la licencia **MIT**. Consulta [LICENSE](LICENSE
 
 ## Notas importantes
 
-- **Método con script**: Windows puede mostrar un aviso sobre scripts de PowerShell. Selecciona "Más información" y luego "Ejecutar de todas formas". Con el instalador este aviso no aparece.
+- **Aviso de SmartScreen**: al abrir el instalador, Windows puede mostrar "Windows protegió tu PC". Pulsa **Más información** > **Ejecutar de todas formas**. Es normal en aplicaciones nuevas que aún no tienen firma digital.
+- **Instalación manual (desarrollo)**: si usas el script de PowerShell en vez del instalador, Windows puede mostrar un aviso sobre scripts. Selecciona "Más información" y luego "Ejecutar de todas formas".
 - **Auto-start**: Si deseas desactivar el inicio automático, ve a **Administrador de tareas** > **Más detalles** > pestaña **Inicio** y desactiva la entrada "Widdeks".
 - **Compatibilidad**: La aplicación está diseñada para Windows 10/11 y usa bibliotecas nativas (pycaw para audio, winrt para controles de medios).
 - **Solución de problemas**: Si el brillo o volumen no responden, verifica que tengas instalados los controladores adecuados de tu fabricante de laptop/desktop.
