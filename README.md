@@ -4,8 +4,6 @@
 
 Widdeks es una aplicación de escritorio para Windows que muestra un reloj personalizable y un panel con acceso rápido a aplicaciones, controles de medios, volumen, brillo y estado de batería. La aplicación se ejecuta en la pantalla y se puede arrastrar y redimensionar según tus preferencias.
 
-> **Consejo:** Las capturas de pantalla se encuentran en la carpeta `clock-widget/screenshots/`. Puedes agregar más imágenes allí y referenciarlas con la sintaxis Markdown estándar.
-
 ## Instalación
 
 ### Requisitos previos
@@ -144,5 +142,3 @@ Esto hará lo siguiente:
 - **Personalización avanzada**: Edita directamente los archivos JSON si quieres configuraciones que no están disponibles en el menú clic-derecho.
 
 ---
-
-*¿Necesitas agregar más secciones o detalles específicos?*
