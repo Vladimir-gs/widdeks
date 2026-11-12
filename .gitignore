@@ -20,3 +20,7 @@ clock-widget/widget_error.log
 
 # Accesos directos locales (contienen rutas absolutas)
 *.lnk
+
+# Configuracion personal del desarrollador (se genera sola en cada PC)
+clock-widget/clock_config.json
+clock-widget/panel_config.json
