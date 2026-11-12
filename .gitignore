@@ -10,6 +10,10 @@ build/
 dist/
 *.manifest
 
+# Binarios generados (nunca se suben al repo; van en Releases)
+*.exe
+*.msi
+
 # Logs y datos locales
 *.log
 clock-widget/widget_error.log
