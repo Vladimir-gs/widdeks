@@ -1,0 +1,5 @@
+tk size=-150 ascent=170 descent=94 linespace=264
+pil size=150 ascent=158 descent=53 bbox23=(0, 46, 176, 159) ink_h=113 ink_top=46
+pil size=176 ascent=185 descent=62 bbox23=(0, 53, 206, 186) ink_h=133 ink_top=53
+pil size=188 ascent=198 descent=66 bbox23=(0, 58, 220, 199) ink_h=141 ink_top=58
+canvas_bbox=(-89, 0, 89, 264)

@@ -1,0 +1,46 @@
+{
+  "x": 1052,
+  "y": 12,
+  "shortcuts": [
+    {
+      "name": "Chrome",
+      "target": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "icon": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+    },
+    {
+      "name": "VS Code",
+      "target": "C:\\Users\\vladi\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+      "icon": "C:\\Users\\vladi\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "name": "Discord",
+      "target": "C:\\Users\\vladi\\AppData\\Local\\Discord\\app-1.0.9261\\Discord.exe",
+      "icon": "C:\\Users\\vladi\\AppData\\Local\\Discord\\app-1.0.9261\\Discord.exe"
+    },
+    {
+      "name": "Explorador",
+      "target": "C:\\Windows\\explorer.exe",
+      "icon": "C:\\Windows\\explorer.exe"
+    },
+    {
+      "name": "Terminal",
+      "target": "C:\\Users\\vladi\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
+      "icon": "C:\\Users\\vladi\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe"
+    },
+    {
+      "name": "Ajustes",
+      "target": "C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe",
+      "icon": "C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe"
+    },
+    {
+      "name": "Calculadora",
+      "target": "C:\\Windows\\System32\\calc.exe",
+      "icon": "C:\\Windows\\System32\\calc.exe"
+    },
+    {
+      "name": "Notas",
+      "target": "C:\\Windows\\System32\\notepad.exe",
+      "icon": "C:\\Windows\\System32\\notepad.exe"
+    }
+  ]
+}
