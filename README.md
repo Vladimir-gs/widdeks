@@ -1,6 +1,6 @@
 # Widdeks - Reloj y Panel de Escritorio
 
-![Widdeks reloj](clock-widget/screenshots/click-hora.png =300x)
+<img src="clock-widget/screenshots/click-hora.png" alt="Menú al hacer clic derecho sobre el reloj" width="360">
 
 Widdeks es una aplicación de escritorio para Windows que muestra un reloj personalizable y un panel con acceso rápido a aplicaciones, controles de medios, volumen, brillo y estado de batería. La aplicación se ejecuta en la pantalla y se puede arrastrar y redimensionar según tus preferencias.
 
@@ -53,6 +53,8 @@ Al iniciar, verás dos elementos principales en tu escritorio:
 
 **Clic derecho sobre el reloj** → Abre un menú con estas opciones de configuración:
 
+<img src="clock-widget/screenshots/click-hora.png" alt="Menú de clic derecho sobre el reloj" width="360">
+
 | Opción | Descripción |
 |--------|-------------|
 | **Formato** | Alterna entre 24 horas y 12 horas (AM/PM) |
@@ -72,6 +74,8 @@ Al iniciar, verás dos elementos principales en tu escritorio:
 ### Interacción con el panel
 
 **Clic derecho sobre el panel** → Menú con:
+
+<img src="clock-widget/screenshots/click-panel.png" alt="Menú de clic derecho sobre el panel" width="360">
 
 - **Ocultar panel**: Oculta o muestra el panel de escritorio
 - **Salir**: Cierra completamente la aplicación
